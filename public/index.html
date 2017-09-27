@@ -1,0 +1,59 @@
+<!-- index.html -->
+<!doctype html>
+
+<!-- ASSIGN OUR ANGULAR MODULE -->
+<html ng-app="resourceApp">
+<head>
+    <!-- META -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
+    <base href="/"> <!-- For HTML5 support of location service in Angular -->
+    <title>Node/Angular Resource booking App</title>
+
+    <!-- SCROLLS -->
+    <!--
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    -->
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <style>
+        html                    { overflow-y:scroll; }
+        body                    { padding-top:50px; }
+        #todo-list              { margin-bottom:30px; }
+        .form-block             {border: 1px solid #d9d9d9; border-radius: 5px; padding: 5px 0 20px 10px; margin-top: 10px;}
+    </style>
+
+    <!-- SPELLS -->
+    <!--
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+    -->
+    <script src="/vendor/jquery.min.js"></script>
+    <script src="/vendor/angular.min.js"></script>
+    <script src="/vendor/angular-route.js"></script>
+    <script src="/vendor/ui-bootstrap-tpls-2.5.0.min.js"></script>
+    
+
+    <script src="core.js"></script>
+
+</head>
+
+<body ng-app="resourceApp" ng-controller="mainController">
+    <div class="container">
+        <div class="row" ng-show="notificationActive">
+                <div class="bg-success">Resource is reserved! :)</div>
+        </div>
+        
+        <ul class="nav nav-tabs">
+            <li role="presentation" ng-class="{ active: isCurrentPath('/')}"><a href="/">Home</a></li>
+            <li role="presentation" ng-class="{ active: isCurrentPath('/admin')}"><a href="/admin">Admin</a></li>        
+        </ul>
+    </div>
+    <div class="container">
+
+        <div ng-view></div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "reservations",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "latest",
+    "mongodb": "latest",
+    "body-parser": "latest",
+    "config": "latest"
+  },
+  "devDependencies": {
+    "chai": "latest",
+    "chai-http": "^3.0.0",
+    "grunt": "~0.4.4",
+    "grunt-contrib-cssmin": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-less": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "jshint-stylish": "latest",
+    "mocha": "^3.5.3"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
+}
