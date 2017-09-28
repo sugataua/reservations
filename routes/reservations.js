@@ -19,9 +19,9 @@ module.exports = function(app, db) {
                             if (err) {
                                 console.log(err);
                             }
-                            console.log('=================================');
-                            result = JSON.stringify(result);
-                            console.log(result);  
+                            
+                            //result = JSON.stringify(result);
+                            //console.log(result);  
                             res.send(result);                      
                         });
 
@@ -41,12 +41,12 @@ module.exports = function(app, db) {
         db.collection('reservations').findOne(filterParams, (err, result) => {            
             if (err) {
                 console.log(err);
-                res.send({'error':'An error has occured'});
+                res.status(500).send({'message':'Internal error'});
             } else {
                 if (result !== null) {
                     res.send(result);
                 } else {
-                    res.status(404).send('Not Found');
+                    res.status(404).send( { message:'Not Found!' } );
                 }                 
             }
         });

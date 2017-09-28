@@ -1,7 +1,7 @@
 process.env.NODE_ENV = 'test';
 
 let MongoClient = require('mongodb').MongoClient;
-var ObjectID = require('mongodb').ObjectID;
+let ObjectID = require('mongodb').ObjectID;
 let config = require('config');
 
 let chai = require('chai');
@@ -14,7 +14,7 @@ chai.use(chaiHttp);
 describe('Resources', function(){
     beforeEach((done) => {
         MongoClient.connect(config.DBHost, function(err, db){
-            if (err) throw console.log(err);
+            if (err) console.log(err);
                        
 
             db.collection('resources').remove({}, (err, result) => {
