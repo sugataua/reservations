@@ -58,24 +58,51 @@ module.exports = function(app, db) {
         console.log('');
         console.log('Begin time: ' + Date(req.body.begin));
         console.log('End time: ' + Date(req.body.end));
-        const new_resource = {
-            resource_id: new ObjectID(req.body.resource_id),
-            begin: new Date(req.body.begin),
-            end: new Date(req.body.end),
-            user: req.body.user,
-            createdAt: new Date()
+
+        function hasCorrectBody(data) {
+            var properties = ['resource_id', 'begin', 'end', 'user'];
+
+            for (var i=0; i<properties.length; i++) {
+                if (!data.hasOwnProperty(properties[i])) {
+                    return false;
+                }
+                return true;
+            };
+
         };
-        //console.log(req.body);
-        console.log(' ');
-        console.log('New document:' + new_resource);
         
-        db.collection('reservations').insert(new_resource, (err, result) => {
-            if (err) {
-                res.send({'error':'An error has occured'});
-            } else {
-                res.send(result.ops[0]);
-            }
-        });    
+        if (hasCorrectBody(req.body)) {
+            console.log('Data is correct');
+            const new_resource = {
+                resource_id: new ObjectID(req.body.resource_id),
+                begin: new Date(req.body.begin),
+                end: new Date(req.body.end),
+                user: req.body.user,
+                createdAt: new Date()
+            };
+            //console.log(req.body);
+            //console.log(' ');
+            //console.log('New document:' + new_resource);
+            
+            db.collection('reservations').insert(new_resource, (err, result) => {
+                if (err) {
+                    res.status(500).send({'message':'Internal error'});
+                } else {
+                    res.send({
+                        message: "Reservation successfuly created!",  
+                        reservation: result.ops[0]
+                    });
+                }
+            });
+        } else {
+            console.log('Data is not CORRECT!');
+            res.status(400).send({
+                message: "Bad Request!"                
+            });
+        }
+        
+
+            
     });
 
 

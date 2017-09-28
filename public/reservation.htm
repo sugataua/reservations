@@ -1,0 +1,19 @@
+
+<div id="reserve_resource_form" class="row" ng-cloak>
+    <div class="col-sm-8 col-sm-offset-2 form-block">
+        <div class="col-sm-offset-4">
+            <h3>Reservation</h3>
+        </div>
+        <ul>
+        <li>Resource: {{reservation.resource_list[0].name}}</li>        
+        <li>From: {{reservation.begin | date : "HH:mm"}}</li>
+        <li>To: {{reservation.end | date : "HH:mm"}}</li>
+        <li>Reserved by: {{reservation.user}}</li>
+        </ul>
+        <div class="col-sm-offset-4">
+            <button class="btn btn-danger">Discard</button>
+        </div>
+        
+       
+    </div>
+</div>

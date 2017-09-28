@@ -174,4 +174,34 @@ describe('Reservations', function() {
         });
     });
 
+    describe('/POST reservation', () => {
+        it('it should not POST a reservation when request not contain correct fields', (done) => {
+            let reservation = {
+                name: "test",
+                description: "csjnkjn3uh9hn cnew9 ce9p3jcsdnc"                
+            };
+
+            chai.request(server)
+                .post('/api/reservations')
+                .send(reservation)
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message');
+                    res.body.message.should.eql('Bad Request!');
+                    // res.body.should.have.property('reservation');
+                    // res.body.reservation.should.have.property('name');
+                    // res.body.reservation.should.have.property('description');
+                    // res.body.reservation.should.have.property('createdAt');
+                    // res.body.reservation.name.should.be.eql(reservation.name);
+                    // res.body.reservation.description.should.be.eql(reservation.description);
+                    
+                    done();
+                });
+        });
+    });
+
+
+    
+
 });

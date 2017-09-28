@@ -13,6 +13,10 @@ resourceApp.config(function($routeProvider, $locationProvider) {
         templateUrl : "admin.htm",
         controller: "adminController"
     })
+    .when("/reservations/:reservationId", {
+        templateUrl: "reservation.htm",
+        controller: "viewReservationController"
+    })
     .when("/", {
         templateUrl : "main.htm",
         controller: "reservationController"
@@ -103,7 +107,28 @@ resourceApp.controller('adminController', ['$scope', '$http', function($scope, $
 
 }]);
 
-resourceApp.controller('reservationController', ['$scope', '$http', function($scope, $http) {
+
+resourceApp.controller('viewReservationController', ['$scope', '$http', '$route', function($scope, $http, $route) {
+    console.log($route.current.params);
+
+    var reservationId = $route.current.params.reservationId;
+    $scope.reservation = null;
+
+    $scope.getSingleReservation = function() {
+        $http.get('/api/reservations/' + reservationId)
+        .then(function(response) {
+            $scope.reservation = response.data;
+            console.log(response);
+        }, function(response) {
+            console.log('Error: ' + response);
+        });        
+    };
+
+    $scope.getSingleReservation();
+
+}]);
+
+resourceApp.controller('reservationController', ['$scope', '$http', '$window', function($scope, $http, $window) {
     $scope.formData = {};
     $scope.resources = [];
     $scope.reservations  = [];
@@ -113,6 +138,8 @@ resourceApp.controller('reservationController', ['$scope', '$http', function($sc
 
     $scope.incorrectInterval = false;
     $scope.intervalViolation = false;
+
+    $scope.isSubmittingData = false;
 
     $scope.calendarOptions = {
         minDate: new Date(),
@@ -214,7 +241,7 @@ resourceApp.controller('reservationController', ['$scope', '$http', function($sc
 
     
     $scope.createReservation = function(isValid) {
-        
+        $scope.isSubmittingData = true;
         
         if (isValid) {
             $scope.formData.begin = collectDT($scope.reservationDate, $scope.reservationBeginTime);
@@ -252,6 +279,13 @@ resourceApp.controller('reservationController', ['$scope', '$http', function($sc
                 console.log(response);
                 $scope.formData = {};
                 $scope.notificationActive = true;
+
+                console.log('Response');
+                console.log(response);
+                $scope.isSubmittingData  = false;
+
+               $window.location.href = '/reservations/' + response.data.reservation._id;
+                
                // $scope.settlements = response.data.settlements;
                 /*
                 $scope.reverse = false;
@@ -259,7 +293,8 @@ resourceApp.controller('reservationController', ['$scope', '$http', function($sc
                 */
                 //$scope.total = response.data.total;
                 //$scope.maxPage = Math.floor($scope.total / $scope.limitRecords) + ($scope.total % $scope.limitRecords > 0 ? 1 : 0);
-                }, function() {});
+                }, function() { $scope.isSubmittingData = false;});
         }
+        $scope.isSubmittingData = false;
     };
 }]);
