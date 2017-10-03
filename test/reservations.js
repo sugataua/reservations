@@ -240,7 +240,66 @@ describe('Reservations', function() {
         });
     });
 
+    describe('/DELETE reservation', () => {
+        it('it should not delete not existing reservation', (done) => {
+            ne_id = new ObjectID();
+                                    
+                chai.request(server)
+                    .delete('/api/reservations/' + ne_id)
+                    .end((err, res) => {
+                                                
+                        res.should.have.status(404);
+                        res.body.should.be.a('object');
+                        res.body.should.have.property('message').eql('Not Found!');
+                    done();
+                    });               
 
+                        
+        });
+
+        it('it should delete reservation', (done) => {
+                          
+            const resource = {
+                name: "Meeting room Colvir",
+                description: "Located on the top floor. 10 seats available."                              
+            };
+
+            
+            MongoClient.connect(config.DBHost, function(err, db){
+                if (err) console.log(err);   
+
+                db.collection('resources').insertOne(resource, (err, result) => {
+                    if (err) console.log(err);
+
+
+                    const reservation = {
+                        resource_id: new ObjectID(result.insertedId),
+                        begin: new Date(),
+                        end: new Date(),
+                        user: "Name Surname"
+                    };
+
+                    db.collection('reservations').insertOne(reservation, (err, result_inner) => {
+                        if (err) console.log(err);
+
+                        chai.request(server)
+                            .delete('/api/reservations/' + result_inner.insertedId.toString())
+                            .end((err, res) => {
+                                if (err) console.log(err);
+                                console.log(res.body);
+                                res.should.have.status(200);
+                                res.body.should.be.a('object');
+                                res.body.should.have.property('message').eql('Reservation successfuly deleted!');
+                            done();
+                            });
+
+                    });
+                });
+
+            });
+                        
+        });
+    });
     
 
 });

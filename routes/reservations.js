@@ -118,17 +118,17 @@ module.exports = function(app, db) {
             res.status(400).send("Bad request");
             return;
         }
-        db.collection('reservations').remove(filterParams, (err, result) => {
+        db.collection('reservations').deleteOne(filterParams, (err, result) => {            
             if (err) {
                 console.log(err);
                 res.status(500).send({
                     'message':'An error has occured'
                 });
             } else {                
-                if (result !== null) {
-                    res.send('Reservation ' + id + ' is deleted!');
+                if (result.deletedCount === 1) {
+                    res.send({message: 'Reservation successfuly deleted!'});
                 } else {
-                    res.status(404).send('Not Found');
+                    res.status(404).send({message: 'Not Found!'});
                 }      
             }
         });
