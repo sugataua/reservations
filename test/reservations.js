@@ -199,6 +199,45 @@ describe('Reservations', function() {
                     done();
                 });
         });
+
+        it('it should POST correct reservation', (done) => {
+            MongoClient.connect(config.DBHost, function(err, db){
+                if (err) console.log(err);
+
+                const resource = {
+                    name: "Meeting room Colvir",
+                    description: "Located on the top floor. 10 seats available."                              
+                };
+
+                db.collection('resources').insertOne(resource, (err, result) => {
+                    if (err) console.log(err);
+
+                    const reservation = {
+                        resource_id: new ObjectID(result.insertedId),
+                        begin: new Date(),
+                        end: new Date(),
+                        user: "Name Surname"
+                    };
+
+
+                    chai.request(server)
+                        .post('/api/reservations/')
+                        .send(reservation)
+                        .end((err, res) => {                                                    
+                            res.should.have.status(200);
+                            res.body.should.be.a('object');
+                            res.body.should.have.property('message').eql("Reservation successfuly created!");
+                            res.body.should.have.property('reservation');
+                            res.body.reservation.should.have.property('resource_id').eql(reservation.resource_id.toString());
+                            res.body.reservation.should.have.property('begin');
+                            res.body.reservation.should.have.property('end');
+                            res.body.reservation.should.have.property('user').eql(reservation.user);                            
+                        done();                        
+                        });      
+                });         
+
+            });            
+        });
     });
 
 
