@@ -1,21 +1,20 @@
-// public/app.js
-
-// angular.module('location', [])
-//     .config(function ($locationProvider) {
-//         $locationProvider.html5Mode(true);
-//     })
+// AngularJS SPA
 
 var resourceApp = angular.module('resourceApp', ["ngRoute", "ui.bootstrap"]);
 
 resourceApp.config(function($routeProvider, $locationProvider) {
     $routeProvider
     .when("/resources/add", {
-        templateUrl : "resource.htm",
+        templateUrl : "resource_edit.htm",
         controller: "resourceCreateController"
     })
     .when("/resources/:resourceId/edit", {
-        templateUrl : "resource.htm",
+        templateUrl : "resource_edit.htm",
         controller: "resourceEditController"
+    })
+    .when("/resources/:resourceId", {
+        templateUrl : "resource_view.htm",
+        controller: "resourceViewController"
     })
     .when("/admin", {
         templateUrl : "admin.htm",
@@ -52,16 +51,38 @@ resourceApp.controller('mainController', ['$scope', '$location', function($scope
 
     $scope.getBitValue = function(exp) {
         return Math.pow(2, exp);
-    }
+    };
 
       $scope.closeAlert = function(index) {
           $scope.alerts.splice(index, 1);
-      }
+      };
 
       $scope.addAlert = function(alert) {
           $scope.alerts.push(alert);
-      }
+      };
 
+
+    
+
+}]);
+
+resourceApp.controller('resourceViewController', ['$scope', '$http', '$route','$location', function($scope, $http, $route, $location){
+    var resourceId = $route.current.params.resourceId;
+    $scope.currentPath = $location.path();
+    console.log($scope.currentPath);
+    $scope.resource = null;
+
+    $scope.getSingleResource = function(id) {
+        $http.get('/api/resources/' + id)
+        .then(function(response) {
+            $scope.resource = response.data;
+            console.log(response);
+        }, function(response) {
+            console.log('Error: ' + response);
+        });        
+    };
+
+    $scope.getSingleResource(resourceId);
 }]);
 
 resourceApp.controller('adminController', ['$scope', '$http', function($scope, $http) {
@@ -170,9 +191,9 @@ resourceApp.controller('resourceEditController', ['$scope', '$http', '$route', f
         $scope.titleAction = "Edit";
         var resourceId = $route.current.params.resourceId;
         $scope.formData = null;
-    
-        $scope.getSingleResource = function() {
-            $http.get('/api/resources/' + resourceId)
+
+        $scope.getSingleResource = function(id) {
+            $http.get('/api/resources/' + id)
             .then(function(response) {
                 $scope.formData = response.data;
                 console.log(response);
@@ -180,7 +201,6 @@ resourceApp.controller('resourceEditController', ['$scope', '$http', '$route', f
                 console.log('Error: ' + response);
             });        
         };
-
 
         $scope.submitResourceForm = function(isValid) {
             if (isValid) {
@@ -210,7 +230,7 @@ resourceApp.controller('resourceEditController', ['$scope', '$http', '$route', f
         }
 
     
-        $scope.getSingleResource();
+        $scope.getSingleResource(resourceId);
 
 }]);
 
