@@ -26,7 +26,7 @@ MongoClient.connect(config.DBHost, function(err, db){
     console.log(config.DBHost);
     
     app.get('/', (req, res) => {
-        res.sendfile('./public/index.html');
+        res.sendFile(__dirname + '/public/index.html');
     });
     
     require('./routes') (app, db);        
@@ -34,7 +34,7 @@ MongoClient.connect(config.DBHost, function(err, db){
     app.use(express.static('public'));
 
     app.all('*', function(req, res) {
-        res.sendfile('./public/index.html');
+        res.sendFile(__dirname + '/public/index.html');
       });
 
 

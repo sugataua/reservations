@@ -9,6 +9,14 @@ var resourceApp = angular.module('resourceApp', ["ngRoute", "ui.bootstrap"]);
 
 resourceApp.config(function($routeProvider, $locationProvider) {
     $routeProvider
+    .when("/resources/add", {
+        templateUrl : "resource.htm",
+        controller: "resourceCreateController"
+    })
+    .when("/resources/:resourceId/edit", {
+        templateUrl : "resource.htm",
+        controller: "resourceEditController"
+    })
     .when("/admin", {
         templateUrl : "admin.htm",
         controller: "adminController"
@@ -20,7 +28,8 @@ resourceApp.config(function($routeProvider, $locationProvider) {
     .when("/", {
         templateUrl : "main.htm",
         controller: "reservationController"
-    });
+    })
+    .otherwise('/');
     $locationProvider.html5Mode(true);
 });
 
@@ -29,13 +38,34 @@ resourceApp.controller('mainController', ['$scope', '$location', function($scope
     $scope.isCurrentPath = function(viewLocation){
         return viewLocation === $location.path();
     };
+
+    $scope.alerts = [];
+    $scope.weekDays = [
+        'Monday',
+        'Tuesday',
+        'Wensday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday'
+    ];
+
+    $scope.getBitValue = function(exp) {
+        return Math.pow(2, exp);
+    }
+
+      $scope.closeAlert = function(index) {
+          $scope.alerts.splice(index, 1);
+      }
+
+      $scope.addAlert = function(alert) {
+          $scope.alerts.push(alert);
+      }
+
 }]);
 
 resourceApp.controller('adminController', ['$scope', '$http', function($scope, $http) {
-    $scope.formData = {};
-
-    
-
+      
     // get all resources
     $scope.resources = [];
 
@@ -53,21 +83,6 @@ resourceApp.controller('adminController', ['$scope', '$http', function($scope, $
     $scope.loadResources();
    
 
-    // send create request to API
-    $scope.createResource = function(isValid) {
-        if (isValid) {
-            console.log($scope.formData);
-            $http.post('/api/resources', JSON.stringify($scope.formData), {headers: {'Content-Type': 'application/json'}})
-                .then(function(response) {
-                    $scope.formData = {}; // clear the form so our user is ready to enter another
-                    $scope.loadResources();
-                    console.log(response);
-                }, function(response) {
-                    console.log('Error: ' + response);
-                });
-        }
-        
-    };
 
     // send DELETE request
     $scope.deleteResource = function(id) {
@@ -108,6 +123,98 @@ resourceApp.controller('adminController', ['$scope', '$http', function($scope, $
 }]);
 
 
+resourceApp.controller('resourceCreateController', ['$scope', '$http', function($scope, $http) {
+    $scope.titleAction = "Create";
+    $scope.formData = {};
+
+        // send create request to API
+        $scope.submitResourceForm = function(isValid) {
+            if (isValid) {
+                console.log($scope.formData);
+                $http.post('/api/resources', JSON.stringify($scope.formData), {headers: {'Content-Type': 'application/json'}})
+                    .then(function(response) {
+                        if (response.status === 200) {
+                            $scope.formData = {}; // clear the form so our user is ready to enter another
+                            $scope.resourceForm.$setPristine();
+                            $scope.resourceForm.$setUntouched();
+    
+                            //$scope.loadResources();
+                            $scope.addAlert({
+                                type: 'success',
+                                msg: response.data.message
+                            });
+                        } else {
+    
+                            $scope.addAlert({
+                                type: 'danger',
+                                msg: response.data.message
+                            });
+                        }
+    
+                        
+                        
+                        
+                        console.log(response);
+                    }, function(response) {
+                        console.log('Error: ' + response);
+                    });
+            }
+            
+        };
+    
+
+}]);
+
+resourceApp.controller('resourceEditController', ['$scope', '$http', '$route', function($scope, $http, $route) {
+        console.log($route.current.params);  
+        $scope.titleAction = "Edit";
+        var resourceId = $route.current.params.resourceId;
+        $scope.formData = null;
+    
+        $scope.getSingleResource = function() {
+            $http.get('/api/resources/' + resourceId)
+            .then(function(response) {
+                $scope.formData = response.data;
+                console.log(response);
+            }, function(response) {
+                console.log('Error: ' + response);
+            });        
+        };
+
+
+        $scope.submitResourceForm = function(isValid) {
+            if (isValid) {
+                console.log($scope.formData);
+                $http.put('/api/resources/' + resourceId, JSON.stringify($scope.formData), {headers: {'Content-Type': 'application/json'}})
+                    .then(function(response) {
+                        if (response.status === 200) {
+                                                        
+                            $scope.addAlert({
+                                type: 'success',
+                                msg: response.data.message
+                            });
+                        } else {
+    
+                            $scope.addAlert({
+                                type: 'danger',
+                                msg: response.data.message
+                            });
+                        }                
+                        
+                        
+                        console.log(response);
+                    }, function(response) {
+                        console.log('Error: ' + response);
+                    });
+            }
+        }
+
+    
+        $scope.getSingleResource();
+
+}]);
+
+
 resourceApp.controller('viewReservationController', ['$scope', '$http', '$route', function($scope, $http, $route) {
     console.log($route.current.params);
 
@@ -129,6 +236,7 @@ resourceApp.controller('viewReservationController', ['$scope', '$http', '$route'
 }]);
 
 resourceApp.controller('reservationController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+    
     $scope.formData = {};
     $scope.resources = [];
     $scope.reservations  = [];

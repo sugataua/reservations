@@ -46,10 +46,12 @@
         
         <ul class="nav nav-tabs">
             <li role="presentation" ng-class="{ active: isCurrentPath('/')}"><a href="/">Home</a></li>
-            <li role="presentation" ng-class="{ active: isCurrentPath('/admin')}"><a href="/admin">Admin</a></li>        
+            <li role="presentation" ng-class="{ active: isCurrentPath('/admin')}"><a href="/admin">Admin</a></li>
+            <li role="presentation" ng-class="{ active: isCurrentPath('/resources/add')}"><a href="/resources/add">Add Resource</a></li>        
         </ul>
     </div>
     <div class="container">
+            <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{alert.msg}}</div>
 
         <div ng-view></div>
 
