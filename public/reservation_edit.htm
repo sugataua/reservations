@@ -1,0 +1,90 @@
+<div id="reserve_resource_form" class="row">
+        <div class="col-sm-8 col-sm-offset-2 form-block">
+            <div class="col-sm-offset-4">
+                <h3>Add reservation</h3>
+            </div>
+       
+            <form name="reservationForm" class="form-horizontal" ng-submit="createReservation(reservationForm.$valid)" novalidate>            
+                
+                <!-- RESOURCE TO RESERVE -->
+                <div class="form-group" ng-class="{ 'has-error' : reservationForm.resource_to_reserve.$invalid && reservationForm.$submitted }">
+                    <label for="resource_to_reserve" class="col-sm-2 control-label">Resource</label>
+                    <div class="col-sm-6">
+                        <select name="resource_to_reserve" 
+                                ng-change="applyFilter()" 
+                                required 
+                                ng-options="resource._id as resource.name for resource in resources"                         
+                                class="form-control" 
+                                type="text" 
+                                ng-model="formData.resource_id">
+                        </select>
+                        <p ng-show="reservationForm.resource_to_reserve.$invalid && reservationForm.$submitted" class="help-block">Resource is required!</p>
+                    </div>
+                    
+                </div>
+    
+                <!-- DATE
+                <div class="form-group" ng-class="{ 'has-error' : reservationForm.reservationDate.$invalid && reservationForm.$submitted }">
+                        <label for="reservationDate">Reserve on:</label>
+                        <input type="date" class="form-contol" name="reservationDate" required ng-model="reservationDate">
+                        <p ng-show="true" class="help-block">Reservation date is required!</p>
+                </div>
+                -->
+    
+                <div class="form-group" ng-class="{ 'has-error' : reservationForm.reservationDate.$invalid && reservationForm.$submitted }">
+                    <label for="reservationDate" class="col-sm-2 control-label">Reservation date</label>
+                    <div class="col-sm-6">
+                        <p class="input-group">                    
+                                <input type="text" name="reservationDate" class="form-control" uib-datepicker-popup="dd.MM.yyyy" ng-model="reservationDate" is-open="popupCalendar.opened" datepicker-options="calendarOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="openCalendar()"><i class="glyphicon glyphicon-calendar"></i></button>
+                                </span>                    
+                        </p>
+                        <p ng-show="reservationForm.reservationDate.$invalid && reservationForm.$submitted" class="help-block">Reservation date is required!</p>
+                    </div>                       
+                </div>
+    
+                <!-- PERIOD OF RESERVATION -->
+                <div class="form-group" >
+                    <div  ng-class="{ 'has-error' : reservationForm.reservationBeginTime.$invalid && reservationForm.$submitted}">
+                        <label for="reservationBeginTime" class="col-sm-2 control-label">From</label>
+                        <div class="col-sm-2">
+                            <div uib-timepicker ng-model="reservationBeginTime" name="reservationBeginTime" required ng-change="changed()" hour-step="1" minute-step="1" show-meridian="false"></div>
+                        </div>
+                    </div>
+                    <div ng-class="{ 'has-error' : reservationForm.reservationEndTime.$invalid && reservationForm.$submitted}">
+                        <label for="reservationEndTime" class="col-sm-2 control-label">To</label>
+                        <div class="col-sm-2">
+                            <div uib-timepicker name="reservationEndTime" ng-model="reservationEndTime" required ng-change="changed()" hour-step="1" minute-step="1" show-meridian="false"></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-offset-2 col-sm-6" ng-class="{ 'has-error' : (reservationForm.reservationBeginTime.$invalid || reservationForm.reservationEndTime.$invalid) && reservationForm.$submitted }">
+                        <p ng-show="reservationForm.reservationEndTime.$invalid && reservationForm.$submitted" class="help-block">End time of reservation is required!</p>
+                        <p ng-show="reservationForm.reservationBeginTime.$invalid && reservationForm.$submitted" class="help-block">Begin time of reservation is required!</p>
+                        
+                    </div>
+                    <div class="col-sm-offset-2 col-sm-6">
+                        <p  ng-show="incorrectInterval">End time cannot be early than begin time!</p>
+                        <p ng-show="intervalViolation">Resource is reserved in selected time interval. Please, choose another time interval!</p>
+                    </div> 
+                </div>
+               
+         
+    
+                  <!-- NAME OF USER -->
+                <div class="form-group" ng-class="{ 'has-error' : reservationForm.user.$invalid && reservationForm.$submitted}">
+                    <label class="col-sm-2 control-label">Reserved by</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" name="user" required placeholder="Name and Surname" ng-model="formData.user">
+                        <p ng-show="reservationForm.user.$invalid && reservationForm.$submitted" class="help-block">Name of person performed reservation is required!</p>
+                    </div>
+                    
+                </div>
+                <div class="col-sm-offset-4 col-sm-2">
+                    <button type="submit" ng-disabled="" class="btn btn-default">Reserve</button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+    

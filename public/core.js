@@ -16,17 +16,26 @@ resourceApp.config(function($routeProvider, $locationProvider) {
         templateUrl : "resource_view.htm",
         controller: "resourceViewController"
     })
-    .when("/admin", {
-        templateUrl : "admin.htm",
-        controller: "adminController"
+    .when("/resources", {
+        templateUrl : "resource_listview.htm",
+        controller: "resourceListViewController"
+    })
+    .when("/reservations", {
+        templateUrl : "reservation_listview.htm",
+        controller: "reservationsListViewController"
+    })
+    .when("/reservations/add", {
+        templateUrl: "reservation_edit.htm",
+        controller: "reservationEditController"
     })
     .when("/reservations/:reservationId", {
         templateUrl: "reservation.htm",
         controller: "viewReservationController"
     })
+    
     .when("/", {
         templateUrl : "main.htm",
-        controller: "reservationController"
+        controller: "mainPageController"
     })
     .otherwise('/');
     $locationProvider.html5Mode(true);
@@ -85,8 +94,9 @@ resourceApp.controller('resourceViewController', ['$scope', '$http', '$route','$
     $scope.getSingleResource(resourceId);
 }]);
 
-resourceApp.controller('adminController', ['$scope', '$http', function($scope, $http) {
-      
+
+
+resourceApp.controller('resourceListViewController', ['$scope', '$http', function($scope, $http) {
     // get all resources
     $scope.resources = [];
 
@@ -101,9 +111,6 @@ resourceApp.controller('adminController', ['$scope', '$http', function($scope, $
         });        
     };
     
-    $scope.loadResources();
-   
-
 
     // send DELETE request
     $scope.deleteResource = function(id) {
@@ -112,11 +119,27 @@ resourceApp.controller('adminController', ['$scope', '$http', function($scope, $
             .then(function(response) {
                 console.log(response);
                 $scope.loadResources();
+                $scope.addAlert({
+                    type: 'info',
+                    msg: response.data.message
+                });
             }, function(response) {
                 console.log('Error: ' + response);
+                $scope.addAlert({
+                    type: 'danger',
+                    msg: response.data.message
+                });
             });
     };
 
+
+    $scope.loadResources();
+   
+
+}]);
+
+resourceApp.controller('reservationsListViewController', ['$scope', '$http', function($scope, $http) {
+      
 
     $scope.loadReservations = function() {
         $http.get('/api/reservations')
@@ -135,9 +158,17 @@ resourceApp.controller('adminController', ['$scope', '$http', function($scope, $
         $http.delete('/api/reservations/' + id)
             .then(function(response) {
                 console.log(response);
+                $scope.addAlert({
+                    type: 'info',
+                    msg: response.data.message
+                });
                 $scope.loadReservations();
             }, function(response) {
                 console.log('Error: ' + response);
+                $scope.addAlert({
+                    type: 'danger',
+                    msg: response.data.message
+                });
             });
     };
 
@@ -255,7 +286,7 @@ resourceApp.controller('viewReservationController', ['$scope', '$http', '$route'
 
 }]);
 
-resourceApp.controller('reservationController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+resourceApp.controller('reservationEditController', ['$scope', '$http', '$window', function($scope, $http, $window) {
     
     $scope.formData = {};
     $scope.resources = [];
