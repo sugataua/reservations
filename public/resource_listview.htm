@@ -1,6 +1,9 @@
 <div id="resource-list" class="row">
         <div class="col-sm-8 col-sm-offset-2">
-            <h3>Resources <span class="label label-info">{{ resources.length }}</span></h3>
+            <h3>Resources 
+                <span class="label label-info">{{ resources.length }}</span>
+                <a href="/resources/add" class="btn btn-success btn-sm">Create New</a>
+            </h3>
 
             <!-- LOOP OVER THE resources IN $scope.resources -->
             <table class="table table-condensed table-hover">
@@ -36,7 +39,7 @@
                             {{resource.description |limitTo:80}}
                         </td>
                         <td>
-                            <button  class="btn btn-danger btn-sm"  ng-click="deleteResource(resource._id)">
+                            <button  class="btn btn-danger btn-sm"  ng-click="openModalWindow(resource)">
                                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                     Delete
                             </button>

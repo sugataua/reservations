@@ -96,7 +96,7 @@ resourceApp.controller('resourceViewController', ['$scope', '$http', '$route','$
 
 
 
-resourceApp.controller('resourceListViewController', ['$scope', '$http', function($scope, $http) {
+resourceApp.controller('resourceListViewController', ['$scope', '$http', '$uibModal', function($scope, $http, $uibModal) {
     // get all resources
     $scope.resources = [];
 
@@ -134,8 +134,50 @@ resourceApp.controller('resourceListViewController', ['$scope', '$http', functio
 
 
     $scope.loadResources();
+
+    $scope.openModalWindow = function(resource) {
+        $scope.resourceToDelete = resource;
+        
+        var modalInstance = $uibModal.open({
+            templateUrl: 'modal_reservation.tpl.htm',
+            controller: 'ModalInstanceCtrl',
+            //scope: $scope,
+            
+            size: 'sm',
+            resolve: {
+                resource: function() {
+                    return $scope.resourceToDelete;
+                }
+            }
+        });
+
+        modalInstance.result.then(function(accept) {
+            $scope.deleteResource($scope.resourceToDelete._id); 
+        },function () {
+            console.log('Modal dismissed at: ' + new Date());
+        });
+    }
+
+    
    
 
+}]);
+
+
+resourceApp.controller('ModalInstanceCtrl', ['$scope','$uibModalInstance',
+ 'resource', function ($scope, $uibModalInstance, resource) {
+    
+    //console.log($scope.resourceToDelete);
+    $scope.resourceToDelete = resource;
+    
+    $scope.ok = function() {
+        //$scope.deleteResource($scope.resourceToDelete.id);
+        $uibModalInstance.close(true);
+    }
+    
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
 }]);
 
 resourceApp.controller('reservationsListViewController', ['$scope', '$http', function($scope, $http) {
