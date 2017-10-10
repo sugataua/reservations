@@ -23,7 +23,7 @@
                         <td>{{ reservation.end | date:"HH:mm"}}</td>
                         <td>{{ reservation.user }}</td>
                         <td>
-                            <button class="btn btn-danger btn-sm" ng-click="deleteReservation(reservation._id)">Cancel</button>
+                            <button class="btn btn-danger btn-sm" ng-click="openModalDeleteConfirmWindow(reservation)">Cancel</button>
                         </td>
                     </tr>
                 </tbody>

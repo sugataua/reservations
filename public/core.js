@@ -135,7 +135,7 @@ resourceApp.controller('resourceListViewController', ['$scope', '$http', '$uibMo
 
     $scope.loadResources();
 
-    $scope.openModalWindow = function(resource) {
+    $scope.openModalDeleteConfirmWindow = function(resource) {
         $scope.resourceToDelete = resource;
         
         var modalInstance = $uibModal.open({
@@ -155,6 +155,7 @@ resourceApp.controller('resourceListViewController', ['$scope', '$http', '$uibMo
             $scope.deleteResource($scope.resourceToDelete._id); 
         },function () {
             console.log('Modal dismissed at: ' + new Date());
+            $scope.resourceToDelete = null;
         });
     }
 
@@ -180,7 +181,7 @@ resourceApp.controller('ModalInstanceCtrl', ['$scope','$uibModalInstance',
     };
 }]);
 
-resourceApp.controller('reservationsListViewController', ['$scope', '$http', function($scope, $http) {
+resourceApp.controller('reservationsListViewController', ['$scope', '$http', '$uibModal', function($scope, $http, $uibModal) {
       
 
     $scope.loadReservations = function() {
@@ -213,6 +214,30 @@ resourceApp.controller('reservationsListViewController', ['$scope', '$http', fun
                 });
             });
     };
+
+    $scope.openModalDeleteConfirmWindow = function(reservation) {
+        $scope.reservationToDelete = reservation;
+        
+        var modalInstance = $uibModal.open({
+            templateUrl: 'modal_reservation.tpl.htm',
+            controller: 'ModalInstanceCtrl',
+            //scope: $scope,
+            
+            size: 'sm',
+            resolve: {
+                resource: function() {
+                    return $scope.reservationToDelete;
+                }
+            }
+        });
+
+        modalInstance.result.then(function(accept) {
+            $scope.deleteReservation($scope.reservationToDelete._id); 
+        },function () {
+            console.log('Modal dismissed at: ' + new Date());
+            $scope.reservationToDelete = null;
+        });
+    }
 
 }]);
 
